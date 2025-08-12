@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate SensaCall Icons</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f0f23;
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .icon-container {
+            background: #1a1a2e;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        canvas {
+            display: block;
+            margin-bottom: 10px;
+            border: 1px solid #2a2a4a;
+        }
+        button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #4f46e5;
+        }
+    </style>
+</head>
+<body>
+    <div class="icon-container">
+        <h2>SensaCall App Icons</h2>
+        <p>Click each icon to download</p>
+    </div>
+    
+    <script>
+        // Icon sizes for PWA
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        
+        // Create icon for each size
+        sizes.forEach(size => {
+            createIcon(size);
+        });
+        
+        function createIcon(size) {
+            const container = document.createElement('div');
+            container.className = 'icon-container';
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#6366f1');
+            gradient.addColorStop(1, '#8b5cf6');
+            
+            // Draw rounded rectangle background
+            ctx.fillStyle = gradient;
+            if (size >= 128) {
+                roundRect(ctx, 0, 0, size, size, size * 0.15);
+            } else {
+                ctx.fillRect(0, 0, size, size);
+            }
+            
+            // Draw "S" logo
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${size * 0.5}px 'Inter', sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('S', size / 2, size / 2);
+            
+            // Add subtle inner shadow for depth
+            if (size >= 192) {
+                ctx.globalCompositeOperation = 'multiply';
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                ctx.beginPath();
+                ctx.arc(size / 2, size / 2, size * 0.4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalCompositeOperation = 'source-over';
+            }
+            
+            // Add label
+            const label = document.createElement('div');
+            label.textContent = `${size}x${size}`;
+            label.style.marginBottom = '5px';
+            
+            // Add download button
+            const button = document.createElement('button');
+            button.textContent = 'Download';
+            button.onclick = () => downloadIcon(canvas, `icon-${size}.png`);
+            
+            container.appendChild(label);
+            container.appendChild(canvas);
+            container.appendChild(button);
+            document.body.appendChild(container);
+        }
+        
+        function roundRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+            ctx.fill();
+        }
+        
+        function downloadIcon(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        // Also create special icons
+        createSpecialIcon('new-chat', 96);
+        createSpecialIcon('voice', 96);
+        createSpecialIcon('badge', 72);
+        
+        function createSpecialIcon(type, size) {
+            const container = document.createElement('div');
+            container.className = 'icon-container';
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            ctx.fillStyle = '#6366f1';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Draw icon based on type
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            
+            switch(type) {
+                case 'new-chat':
+                    // Plus icon
+                    ctx.beginPath();
+                    ctx.moveTo(size * 0.3, size * 0.5);
+                    ctx.lineTo(size * 0.7, size * 0.5);
+                    ctx.moveTo(size * 0.5, size * 0.3);
+                    ctx.lineTo(size * 0.5, size * 0.7);
+                    ctx.stroke();
+                    break;
+                    
+                case 'voice':
+                    // Microphone icon
+                    ctx.strokeRect(size * 0.4, size * 0.2, size * 0.2, size * 0.35);
+                    ctx.beginPath();
+                    ctx.arc(size * 0.5, size * 0.65, size * 0.25, 0, Math.PI);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(size * 0.5, size * 0.65);
+                    ctx.lineTo(size * 0.5, size * 0.8);
+                    ctx.stroke();
+                    break;
+                    
+                case 'badge':
+                    // Notification badge
+                    ctx.fillStyle = '#ef4444';
+                    ctx.beginPath();
+                    ctx.arc(size / 2, size / 2, size * 0.3, 0, Math.PI * 2);
+                    ctx.fill();
+                    break;
+            }
+            
+            // Add label
+            const label = document.createElement('div');
+            label.textContent = `${type}-${size}.png`;
+            label.style.marginBottom = '5px';
+            
+            // Add download button
+            const button = document.createElement('button');
+            button.textContent = 'Download';
+            button.onclick = () => downloadIcon(canvas, `${type}-${size}.png`);
+            
+            container.appendChild(label);
+            container.appendChild(canvas);
+            container.appendChild(button);
+            document.body.appendChild(container);
+        }
+        
+        // Auto-generate and save instructions
+        console.log('Icons generated! Download each icon and place them in the /icons directory.');
+        console.log('For production, use a proper icon generation tool or design software.');
+    </script>
+</body>
+</html>

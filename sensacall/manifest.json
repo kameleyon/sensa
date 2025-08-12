@@ -1,0 +1,137 @@
+{
+  "name": "SensaCall - AI Communication Platform",
+  "short_name": "SensaCall",
+  "description": "Advanced AI-powered communication platform with text, voice, video, and avatar modes",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1a1a2e",
+  "background_color": "#0f0f23",
+  "scope": "/",
+  "id": "sensacall-pwa-v1",
+  "categories": ["communication", "productivity", "utilities"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Conversation",
+      "short_name": "New Chat",
+      "description": "Start a new conversation",
+      "url": "/?action=new",
+      "icons": [
+        {
+          "src": "icons/new-chat-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Voice Mode",
+      "short_name": "Voice",
+      "description": "Open in voice mode",
+      "url": "/?mode=voice",
+      "icons": [
+        {
+          "src": "icons/voice-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/mobile-1.png",
+      "sizes": "412x915",
+      "type": "image/png",
+      "label": "Home screen"
+    },
+    {
+      "src": "screenshots/mobile-2.png",
+      "sizes": "412x915",
+      "type": "image/png",
+      "label": "Chat interface"
+    },
+    {
+      "src": "screenshots/mobile-3.png",
+      "sizes": "412x915",
+      "type": "image/png",
+      "label": "Voice mode"
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "media",
+          "accept": ["image/*", "audio/*", "video/*"]
+        }
+      ]
+    }
+  },
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "handle_links": "preferred",
+  "lang": "en-US",
+  "dir": "ltr"
+}

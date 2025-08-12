@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SensaCall - Your AI Companion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Questrial&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #1A517B;
+            --primary: #1d7693;
+            --primary-light: #239ba8;
+            --accent-dark: #e56b00;
+            --accent: #fcb81c;
+            --neutral-light: #f1f5fc;
+            --neutral: #bbd8da;
+            --white: #ffffff;
+            --black: #0a0a0a;
+            --shadow: rgba(26, 81, 123, 0.2);
+            --glass: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            font-family: 'Questrial', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+            color: var(--black);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body.dark-mode {
+            --neutral-light: #1a1a1a;
+            --white: #0f0f0f;
+            --black: #f0f0f0;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --glass: rgba(0, 0, 0, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px var(--shadow);
+        }
+
+        .logo {
+            font-family: 'Comfortaa', cursive;
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .icon-btn {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.75rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--black);
+        }
+
+        .icon-btn:hover {
+            background: var(--glass-border);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr 320px;
+            gap: 2rem;
+            flex: 1;
+        }
+
+        /* Glass Card Style */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px var(--shadow);
+        }
+
+        /* Left Panel - Agents & Modes */
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .section-title {
+            font-family: 'Comfortaa', cursive;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        .agent-card {
+            aspect-ratio: 1;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, var(--glass), var(--glass-border));
+            border: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px var(--shadow);
+        }
+
+        .agent-card.active {
+            background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .agent-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: var(--glass-border);
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .agent-name {
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .modes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .mode-btn {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--black);
+            font-family: 'Questrial', sans-serif;
+        }
+
+        .mode-btn:hover {
+            background: var(--glass-border);
+            transform: translateX(4px);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-color: var(--primary-light);
+        }
+
+        /* Chat Area */
+        .chat-area {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-agent-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chat-agent-avatar {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            /*background: linear-gradient(135deg, var(--primary), var(--primary-light));*/
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+            border-color: var(--accent);
+        }
+
+        .chat-agent-details h3 {
+            font-family: 'Comfortaa', cursive;
+            font-size: 1.125rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-agent-details p {
+            font-size: 0.875rem;
+            color: var(--neutral);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 1rem 1.25rem;
+            border-radius: 1.25rem;
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(2px);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+            color: white;
+            border: none;
+        }
+
+        .chat-input-area {
+            padding: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+            
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border-radius: 2rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--white);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: 'Questrial', sans-serif;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(29, 118, 147, 0.1);
+        }
+
+        .send-btn {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 24px rgba(229, 107, 0, 0.3);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Right Panel - Settings */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .tone-slider-container {
+            padding: 1rem 0;
+        }
+
+        .tone-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--neutral);
+        }
+
+        .tone-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary) 50%, var(--accent) 100%);
+            -webkit-appearance: none;
+            appearance: none;
+            outline: none;
+        }
+
+        .tone-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 8px var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .tone-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .subscription-card {
+            background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            text-align: center;
+        }
+
+        .subscription-card h4 {
+            font-family: 'Comfortaa', cursive;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subscription-card p {
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .upgrade-btn {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            background: white;
+            color: var(--accent-dark);
+            border: none;
+            font-weight: 300;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Questrial', sans-serif;
+        }
+
+        .upgrade-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .welcome-content {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 2rem;
+            padding: 3rem;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 60px var(--shadow);
+        }
+
+        .welcome-logo {
+            font-family: 'Comfortaa', cursive;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-subtitle {
+            color: var(--neutral);
+            margin-bottom: 2rem;
+            font-size: 1.125rem;
+        }
+
+        .start-btn {
+            padding: 1rem 3rem;
+            border-radius: 2rem;
+            background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+            color: white;
+            border: none;
+            font-size: 1.125rem;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Questrial', sans-serif;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(229, 107, 0, 0.3);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 280px 1fr;
+            }
+            .right-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            .left-panel {
+                display: none;
+            }
+            .message-bubble {
+                max-width: 85%;
+            }
+        }
+
+        /* Loading Animation */
+        .typing-indicator {
+            display: flex;
+            gap: 0.25rem;
+            padding: 1rem 1.25rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.25rem;
+            width: fit-content;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--neutral);
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.5;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-content">
+            <div class="welcome-logo">SensaCall</div>
+            <p class="welcome-subtitle">Your AI companion for authentic conversations</p>
+            <button class="start-btn" onclick="startApp()">Begin Conversation</button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="container hidden" id="mainApp">
+        <!-- Navigation -->
+        <nav class="nav">
+            <div class="logo">SensaCall</div>
+            <div class="nav-actions">
+                <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">
+                    <i data-lucide="sun" class="theme-icon"></i>
+                </button>
+                <button class="icon-btn" title="Settings">
+                    <i data-lucide="settings"></i>
+                </button>
+                <button class="icon-btn" title="Help">
+                    <i data-lucide="help-circle"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Left Panel -->
+            <aside class="left-panel">
+                <!-- Agents Section -->
+                <div class="glass-card">
+                    <h2 class="section-title">
+                        <i data-lucide="users" style="width: 20px; height: 20px;"></i>
+                        Select Agent
+                    </h2>
+                    <div class="agents-grid" id="agentsGrid">
+                        <!-- Agents will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Modes Section -->
+                <div class="glass-card">
+                    <h2 class="section-title">
+                        <i data-lucide="message-circle" style="width: 20px; height: 20px;"></i>
+                        Conversation Mode
+                    </h2>
+                    <div class="modes-list" id="modesList">
+                        <!-- Modes will be populated here -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Chat Area -->
+            <main class="glass-card chat-area">
+                <div class="chat-header">
+                    <div class="chat-agent-info">
+                        <div class="chat-agent-avatar" id="activeAgentAvatar">L</div>
+                        <div class="chat-agent-details">
+                            <h3 id="activeAgentName">Luna</h3>
+                            <p id="activeAgentMode">Advice Mode</p>
+                        </div>
+                    </div>
+                    <button class="icon-btn" title="Clear Chat" onclick="clearChat()">
+                        <i data-lucide="trash-2"></i>
+                    </button>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will appear here -->
+                </div>
+
+                <div class="chat-input-area">
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            class="chat-input" 
+                            id="chatInput"
+                            placeholder="Type your message..."
+                            onkeypress="handleKeyPress(event)"
+                        />
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                            <i data-lucide="send"></i>
+                        </button>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Right Panel -->
+            <aside class="right-panel">
+                <!-- Tone Control -->
+                <div class="glass-card">
+                    <h2 class="section-title">
+                        <i data-lucide="sliders" style="width: 20px; height: 20px;"></i>
+                        Tone Control
+                    </h2>
+                    <div class="tone-slider-container">
+                        <div class="tone-labels">
+                            <span>Calm</span>
+                            <span>Balanced</span>
+                            <span>Energetic</span>
+                        </div>
+                        <input 
+                            type="range" 
+                            class="tone-slider" 
+                            id="toneSlider"
+                            min="0" 
+                            max="100" 
+                            value="50"
+                        />
+                    </div>
+                </div>
+
+                <!-- Subscription -->
+                <div class="glass-card subscription-card">
+                    <h4>Free Plan</h4>
+                    <p>50 messages per day</p>
+                    <button class="upgrade-btn">Upgrade to Pro</button>
+                </div>
+
+                <!-- Stats -->
+                <div class="glass-card">
+                    <h2 class="section-title">
+                        <i data-lucide="bar-chart-2" style="width: 20px; height: 20px;"></i>
+                        Today's Usage
+                    </h2>
+                    <div style="padding: 1rem 0;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Messages</span>
+                            <span id="messageCount">0 / 50</span>
+                        </div>
+                        <div style="height: 4px; background: var(--glass-border); border-radius: 2px; overflow: hidden;">
+                            <div id="usageBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // App State
+        let currentAgent = 'Luna';
+        let currentMode = 'advice';
+        let messageCount = 0;
+        const maxMessages = 50;
+        let isTyping = false;
+
+        // Agents Data
+        const agents = [
+            { name: 'Luna', initial: 'L', description: 'Empathetic night owl who loves deep conversations' },
+            { name: 'Phoenix', initial: 'P', description: 'Energetic motivator who rises from any challenge' },
+            { name: 'Sage', initial: 'S', description: 'Wise advisor with ancient knowledge' },
+            { name: 'Zara', initial: 'Z', description: 'Trendy bestie who knows all the tea' },
+            { name: 'Atlas', initial: 'A', description: 'Strategic planner who carries the weight' },
+            { name: 'Nova', initial: 'N', description: 'Bright spark of creativity and innovation' },
+            { name: 'Echo', initial: 'E', description: 'Reflective listener who truly hears you' },
+            { name: 'Kai', initial: 'K', description: 'Chill surfer with go-with-the-flow vibes' },
+            { name: 'Indigo', initial: 'I', description: 'Intuitive soul with mystical insights' },
+            { name: 'Raven', initial: 'R', description: 'Dark humor enthusiast who gets the struggles' },
+            { name: 'Storm', initial: 'St', description: 'Powerful force who embraces the chaos' },
+            { name: 'Jade', initial: 'J', description: 'Grounded healer with natural wisdom' },
+            { name: 'Blaze', initial: 'B', description: 'Fiery coach who lights the path' },
+            { name: 'River', initial: 'Ri', description: 'Flowing conversationalist who adapts' },
+            { name: 'Cosmos', initial: 'C', description: 'Universal thinker with boundless perspective' }
+        ];
+
+        // Modes Data
+        const modes = [
+            { id: 'vent', name: 'Vent', icon: 'heart', description: 'Let it all out, I\'m here to listen' },
+            { id: 'gossip', name: 'Gossip', icon: 'message-square', description: 'Spill the tea, bestie' },
+            { id: 'coach', name: 'Coach', icon: 'target', description: 'Strategic guidance and clarity' },
+            { id: 'solver', name: 'Solver', icon: 'tool', description: 'Practical solutions and action steps' },
+            { id: 'hype', name: 'Hype', icon: 'zap', description: 'Energy boost and motivation' },
+            { id: 'advice', name: 'Advice', icon: 'compass', description: 'Balanced perspective and wisdom' }
+        ];
+
+        // Initialize App
+        function initApp() {
+            populateAgents();
+            populateModes();
+            updateActiveAgent();
+            addWelcomeMessage();
+        }
+
+        // Start App
+        function startApp() {
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            const mainApp = document.getElementById('mainApp');
+            
+            welcomeScreen.classList.add('fade-out');
+            setTimeout(() => {
+                welcomeScreen.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+                lucide.createIcons();
+            }, 500);
+        }
+
+        // Populate Agents
+        function populateAgents() {
+            const grid = document.getElementById('agentsGrid');
+            agents.forEach((agent, index) => {
+                const card = document.createElement('div');
+                card.className = `agent-card ${agent.name === currentAgent ? 'active' : ''}`;
+                card.onclick = () => selectAgent(agent.name);
+                card.innerHTML = `
+                    <div class="agent-avatar">${agent.initial}</div>
+                    <div class="agent-name">${agent.name}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Populate Modes
+        function populateModes() {
+            const list = document.getElementById('modesList');
+            modes.forEach(mode => {
+                const btn = document.createElement('button');
+                btn.className = `mode-btn ${mode.id === currentMode ? 'active' : ''}`;
+                btn.onclick = () => selectMode(mode.id);
+                btn.innerHTML = `
+                    <i data-lucide="${mode.icon}" style="width: 18px; height: 18px;"></i>
+                    <span>${mode.name}</span>
+                `;
+                list.appendChild(btn);
+            });
+            lucide.createIcons();
+        }
+
+        // Select Agent
+        function selectAgent(agentName) {
+            currentAgent = agentName;
+            document.querySelectorAll('.agent-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            updateActiveAgent();
+            addSystemMessage(`Switched to ${agentName}`);
+        }
+
+        // Select Mode
+        function selectMode(modeId) {
+            currentMode = modeId;
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            updateActiveAgent();
+            const modeName = modes.find(m => m.id === modeId).name;
+            addSystemMessage(`Switched to ${modeName} mode`);
+        }
+
+        // Update Active Agent Display
+        function updateActiveAgent() {
+            const agent = agents.find(a => a.name === currentAgent);
+            const mode = modes.find(m => m.id === currentMode);
+            
+            document.getElementById('activeAgentAvatar').textContent = agent.initial;
+            document.getElementById('activeAgentName').textContent = agent.name;
+            document.getElementById('activeAgentMode').textContent = `${mode.name} Mode`;
+        }
+
+        // Add Welcome Message
+        function addWelcomeMessage() {
+            const agent = agents.find(a => a.name === currentAgent);
+            const welcomeMessages = {
+                'Luna': "Hey there, night owl. I'm here whenever you need to talk. What's on your mind?",
+                'Phoenix': "Rise and shine! Ready to turn today into something amazing? Let's do this!",
+                'Sage': "Greetings, seeker. I sense you have something weighing on your mind. Share your thoughts.",
+                'Zara': "Hey bestie! You look like you have something juicy to share. Spill!",
+                'Atlas': "Let's map out what you're dealing with. I'm here to help you strategize.",
+                'Nova': "Spark any creative ideas today? Let's explore what's possible!",
+                'Echo': "I'm here to listen. Take your time, and share what's in your heart.",
+                'Kai': "Hey there, friend. Let's ride this wave together. What's up?",
+                'Indigo': "The universe brought you here for a reason. What does your intuition tell you?",
+                'Raven': "Welcome to the real talk zone. No sugarcoating here. What's going on?",
+                'Storm': "Feel that electricity in the air? Let's channel that energy. What's brewing?",
+                'Jade': "Take a deep breath with me. Now, what would you like to explore today?",
+                'Blaze': "Time to light it up! What goals are we crushing today?",
+                'River': "Let's see where this conversation flows. What's on your mind?",
+                'Cosmos': "Welcome to the infinite possibilities. What perspective shall we explore?"
+            };
+            
+            addMessage(welcomeMessages[currentAgent] || "Hello! How can I help you today?", false);
+        }
+
+        // Send Message
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message || isTyping || messageCount >= maxMessages) return;
+            
+            // Add user message
+            addMessage(message, true);
+            input.value = '';
+            messageCount++;
+            updateUsageBar();
+            
+            // Show typing indicator
+            showTyping();
+            
+            // Get AI response
+            try {
+                const response = await getAIResponse(message);
+                hideTyping();
+                addMessage(response, false);
+            } catch (error) {
+                hideTyping();
+                addMessage("I'm having trouble connecting right now. Please try again in a moment.", false);
+            }
+        }
+
+        // Get AI Response
+        async function getAIResponse(message) {
+            const agent = agents.find(a => a.name === currentAgent);
+            const mode = modes.find(m => m.id === currentMode);
+            const toneValue = document.getElementById('toneSlider').value;
+            
+            const systemPrompt = `You are ${agent.name}, ${agent.description}. 
+                You are currently in ${mode.name} mode: ${mode.description}.
+                The user has set the tone to ${toneValue}% (0=calm, 50=balanced, 100=energetic).
+                Respond authentically as this character would, matching the mode and tone.
+                Keep responses concise but meaningful. Be conversational and genuine.`;
+            
+            try {
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer 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',
+                        'Content-Type': 'application/json',
+                        'HTTP-Referer': window.location.href,
+                        'X-Title': 'SensaCall'
+                    },
+                    body: JSON.stringify({
+                        model: 'openai/gpt-3.5-turbo',
+                        messages: [
+                            { role: 'system', content: systemPrompt },
+                            { role: 'user', content: message }
+                        ],
+                        temperature: 0.8,
+                        max_tokens: 200
+                    })
+                });
+                
+                if (!response.ok) throw new Error('API request failed');
+                
+                const data = await response.json();
+                return data.choices[0].message.content;
+            } catch (error) {
+                console.error('AI Response Error:', error);
+                // Fallback responses based on mode
+                const fallbacks = {
+                    'vent': "I hear you. That sounds really challenging. Tell me more about how you're feeling.",
+                    'gossip': "No way! That's wild. What happened next?",
+                    'coach': "Let's break this down. What's the main challenge you're facing right now?",
+                    'solver': "I see the problem. Here's what we can do to address it step by step.",
+                    'hype': "You've got this! I believe in you completely. Let's make it happen!",
+                    'advice': "That's a thoughtful question. Here's my perspective on the situation."
+                };
+                return fallbacks[currentMode] || "I understand. Can you tell me more about that?";
+            }
+        }
+
+        // Add Message to Chat
+        function addMessage(text, isUser) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : ''}`;
+            messageDiv.innerHTML = `
+                <div class="message-bubble">${text}</div>
+            `;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // Add System Message
+        function addSystemMessage(text) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.style.justifyContent = 'center';
+            messageDiv.innerHTML = `
+                <div style="padding: 0.5rem 1rem; background: var(--glass-border); border-radius: 1rem; font-size: 0.875rem; color: var(--neutral);">
+                    ${text}
+                </div>
+            `;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // Show Typing Indicator
+        function showTyping() {
+            isTyping = true;
+            const messagesDiv = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            messagesDiv.appendChild(typingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // Hide Typing Indicator
+        function hideTyping() {
+            isTyping = false;
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) indicator.remove();
+        }
+
+        // Clear Chat
+        function clearChat() {
+            if (confirm('Clear all messages?')) {
+                document.getElementById('chatMessages').innerHTML = '';
+                addWelcomeMessage();
+            }
+        }
+
+        // Toggle Theme
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.querySelector('.theme-icon');
+            const isDark = document.body.classList.contains('dark-mode');
+            icon.setAttribute('data-lucide', isDark ? 'moon' : 'sun');
+            lucide.createIcons();
+        }
+
+        // Update Usage Bar
+        function updateUsageBar() {
+            const percentage = (messageCount / maxMessages) * 100;
+            document.getElementById('messageCount').textContent = `${messageCount} / ${maxMessages}`;
+            document.getElementById('usageBar').style.width = `${percentage}%`;
+            
+            if (messageCount >= maxMessages) {
+                document.getElementById('sendBtn').disabled = true;
+                addSystemMessage('Daily message limit reached. Upgrade to Pro for unlimited messages.');
+            }
+        }
+
+        // Handle Enter Key
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Initialize on load
+        window.onload = () => {
+            initApp();
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>

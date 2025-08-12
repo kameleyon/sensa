@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="description" content="SensaCall - Advanced AI Communication Platform">
+    
+    <title>SensaCall</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- iOS Icons -->
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Preconnect to improve performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- App Container -->
+    <div id="app" class="app-container">
+        
+        <!-- Header -->
+        <header class="app-header">
+            <button class="menu-toggle" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1 class="app-title">SensaCall</h1>
+            <button class="install-btn hidden" aria-label="Install App">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L12 14M12 14L17 9M12 14L7 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M5 17V20C5 20.5523 5.44772 21 6 21H18C18.5523 21 19 20.5523 19 20V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </header>
+        
+        <!-- Mode Selector (Swipeable on mobile) -->
+        <div class="mode-selector-container">
+            <div class="mode-selector" id="modeSelector">
+                <button class="mode-btn active" data-mode="text">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M7 9H17M7 13H17M7 17H12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span>Text</span>
+                </button>
+                <button class="mode-btn" data-mode="voice">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <rect x="9" y="3" width="6" height="11" rx="3" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 18V21M12 21H8M12 21H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M5 11C5 14.866 8.13401 18 12 18C15.866 18 19 14.866 19 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span>Voice</span>
+                </button>
+                <button class="mode-btn" data-mode="video">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <rect x="3" y="6" width="14" height="12" rx="2" stroke="currentColor" stroke-width="2"/>
+                        <path d="M17 10L21 8V16L17 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Video</span>
+                </button>
+                <button class="mode-btn" data-mode="avatar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="2"/>
+                        <path d="M5 20C5 16.134 8.13401 13 12 13C15.866 13 19 16.134 19 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span>Avatar</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <main class="main-content" id="mainContent">
+            <!-- Pull to Refresh Indicator -->
+            <div class="pull-to-refresh" id="pullToRefresh">
+                <div class="ptr-spinner"></div>
+            </div>
+            
+            <!-- Chat Container -->
+            <div class="chat-container" id="chatContainer">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Virtual scrolling container -->
+                    <div class="virtual-scroll-container" id="virtualScroll">
+                        <!-- Messages will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Voice Recording Interface -->
+            <div class="voice-interface hidden" id="voiceInterface">
+                <div class="voice-visualizer">
+                    <canvas id="audioVisualizer"></canvas>
+                </div>
+                <div class="voice-timer" id="voiceTimer">00:00</div>
+                <button class="voice-cancel-btn" id="voiceCancelBtn">Cancel</button>
+            </div>
+        </main>
+        
+        <!-- Input Area -->
+        <div class="input-area" id="inputArea">
+            <div class="input-container">
+                <button class="attach-btn" aria-label="Attach file">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M21.44 11.05L12.25 20.24C10.84 21.65 8.56 21.65 7.15 20.24C5.74 18.83 5.74 16.55 7.15 15.14L15.29 7C16.17 6.12 17.59 6.12 18.47 7C19.35 7.88 19.35 9.3 18.47 10.18L11.68 16.97C11.29 17.36 10.66 17.36 10.27 16.97C9.88 16.58 9.88 15.95 10.27 15.56L16.35 9.48" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                
+                <div class="message-input-wrapper">
+                    <textarea 
+                        class="message-input" 
+                        id="messageInput"
+                        placeholder="Type a message..."
+                        rows="1"
+                        maxlength="5000"></textarea>
+                </div>
+                
+                <button class="voice-btn" id="voiceBtn" aria-label="Voice message">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <rect x="9" y="3" width="6" height="11" rx="3" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 18V21M12 21H8M12 21H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M5 11C5 14.866 8.13401 18 12 18C15.866 18 19 14.866 19 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                
+                <button class="send-btn" id="sendBtn" aria-label="Send message">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Floating Action Button -->
+        <button class="fab" id="fab" aria-label="Quick actions">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+        
+        <!-- Side Menu -->
+        <aside class="side-menu" id="sideMenu">
+            <div class="menu-header">
+                <h2>Conversations</h2>
+                <button class="close-menu" id="closeMenu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="conversation-list" id="conversationList">
+                <!-- Conversations will be dynamically added here -->
+            </div>
+            <button class="new-conversation-btn" id="newConversationBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                New Conversation
+            </button>
+        </aside>
+        
+        <!-- Overlay -->
+        <div class="overlay" id="overlay"></div>
+        
+        <!-- Quick Actions Menu -->
+        <div class="quick-actions hidden" id="quickActions">
+            <button class="quick-action-btn" data-action="clear">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 6H21M8 6V4C8 3.44772 8.44772 3 9 3H15C15.5523 3 16 3.44772 16 4V6M19 6V20C19 20.5523 18.5523 21 18 21H6C5.44772 21 5 20.5523 5 20V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Clear Chat
+            </button>
+            <button class="quick-action-btn" data-action="export">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 15V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Export
+            </button>
+            <button class="quick-action-btn" data-action="settings">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 1V6M12 18V23M23 12H18M6 12H1M20.5 7.5L16.5 11.5M7.5 16.5L3.5 20.5M20.5 16.5L16.5 12.5M7.5 7.5L3.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Settings
+            </button>
+        </div>
+        
+        <!-- Loading Overlay -->
+        <div class="loading-overlay hidden" id="loadingOverlay">
+            <div class="loading-spinner"></div>
+        </div>
+        
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toastContainer"></div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
