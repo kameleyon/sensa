@@ -34,15 +34,6 @@ export function ChatInterface({ conversationId, userId }: ChatInterfaceProps) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
-
-  // Auto-resize textarea
-  useEffect(() => {
-    if (inputRef.current) {
-      const textarea = inputRef.current
-      textarea.style.height = 'auto'
-      textarea.style.height = `${textarea.scrollHeight}px`
-    }
-  }, [message])
   
   // Handle typing indicator
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -160,7 +151,7 @@ export function ChatInterface({ conversationId, userId }: ChatInterfaceProps) {
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             placeholder="Type your message..."
-            className="flex-1 resize-none rounded-xl border border-neutral-light bg-white/50 px-4 py-2 font-body focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-primary-light max-h-32"
+            className="flex-1 resize-none rounded-xl border border-neutral-light bg-white/50 px-4 py-2 font-body focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
             rows={1}
             disabled={!isConnected || sendMessageMutation.isPending}
           />

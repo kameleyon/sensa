@@ -303,7 +303,7 @@
             max-width: 70%;
             padding: 1rem 1.25rem;
             border-radius: 1.25rem;
-            background: transparent;
+            background: var(--glass);
             border: 1px solid var(--glass-border);
             backdrop-filter: blur(2px);
             color: rgba(255, 255, 255, 0.8);
@@ -325,12 +325,13 @@
             display: flex;
             gap: 1rem;
             align-items: center;
+            
         }
 
         .chat-input {
             flex: 1;
-            padding: 1rem 1.5rem;
-            border-radius: 2rem;
+            padding: 1rem 1rem;
+            border-radius: 1rem;
             background: var(--glass);
             border: 1px solid var(--glass-border);
             color: var(--white);
@@ -338,11 +339,55 @@
             outline: none;
             transition: all 0.3s ease;
             font-family: 'Questrial', sans-serif;
+            resize: none;
+            min-height: 3rem;
+            max-height: 5rem;
+            overflow-y: auto;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
+        }
+
+        .chat-input::-webkit-scrollbar {
+            display: none; /* WebKit */
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
         }
 
         .chat-input:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(29, 118, 147, 0.1);
+        }
+
+        .mic-btn {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mic-btn:hover {
+            background: var(--glass-border);
+            transform: scale(1.05);
+        }
+
+        .mic-btn.recording {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         .send-btn {
@@ -661,13 +706,17 @@
 
                 <div class="chat-input-area">
                     <div class="input-wrapper">
-                        <input 
-                            type="text" 
+                        <textarea 
                             class="chat-input" 
                             id="chatInput"
                             placeholder="Type your message..."
                             onkeypress="handleKeyPress(event)"
-                        />
+                            oninput="autoResize(this)"
+                            rows="1"
+                        ></textarea>
+                        <button class="mic-btn" id="micBtn" onclick="toggleSpeechRecognition()" title="Voice input">
+                            <i data-lucide="mic"></i>
+                        </button>
                         <button class="send-btn" id="sendBtn" onclick="sendMessage()">
                             <i data-lucide="send"></i>
                         </button>
@@ -737,6 +786,8 @@
         let messageCount = 0;
         const maxMessages = 50;
         let isTyping = false;
+        let isRecording = false;
+        let recognition = null;
 
         // Agents Data
         const agents = [
@@ -1043,9 +1094,80 @@
             }
         }
 
+        // Auto-resize textarea
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 128) + 'px';
+        }
+
+        // Initialize Speech Recognition
+        function initSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onstart = function() {
+                    isRecording = true;
+                    const micBtn = document.getElementById('micBtn');
+                    micBtn.classList.add('recording');
+                    const icon = micBtn.querySelector('i');
+                    icon.setAttribute('data-lucide', 'mic-off');
+                    lucide.createIcons();
+                };
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    const chatInput = document.getElementById('chatInput');
+                    chatInput.value = transcript;
+                    autoResize(chatInput);
+                };
+
+                recognition.onend = function() {
+                    isRecording = false;
+                    const micBtn = document.getElementById('micBtn');
+                    micBtn.classList.remove('recording');
+                    const icon = micBtn.querySelector('i');
+                    icon.setAttribute('data-lucide', 'mic');
+                    lucide.createIcons();
+                };
+
+                recognition.onerror = function(event) {
+                    console.error('Speech recognition error:', event.error);
+                    isRecording = false;
+                    const micBtn = document.getElementById('micBtn');
+                    micBtn.classList.remove('recording');
+                    const icon = micBtn.querySelector('i');
+                    icon.setAttribute('data-lucide', 'mic');
+                    lucide.createIcons();
+                };
+            }
+        }
+
+        // Toggle Speech Recognition
+        function toggleSpeechRecognition() {
+            if (!recognition) {
+                initSpeechRecognition();
+            }
+
+            if (!recognition) {
+                addSystemMessage('Speech recognition is not supported in this browser.');
+                return;
+            }
+
+            if (isRecording) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        }
+
         // Initialize on load
         window.onload = () => {
             initApp();
+            initSpeechRecognition();
             lucide.createIcons();
         };
     </script>
