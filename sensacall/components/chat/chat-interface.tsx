@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import { useRealtime } from '@/lib/hooks/use-realtime'
-import { useChatStore } from '@/lib/store/chat-store'
-import { useMessages, useSendMessage } from '@/lib/hooks/use-conversations'
+import React, { useState, useEffect, useRef } from 'react'
+import { useRealtime } from '../../lib/hooks/use-realtime'
+import { useChatStore } from '../../lib/store/chat-store'
+import { useMessages, useSendMessage } from '../../lib/hooks/use-conversations'
 
 interface ChatInterfaceProps {
   conversationId: string
@@ -55,7 +55,7 @@ export function ChatInterface({ conversationId, userId }: ChatInterfaceProps) {
     sendTyping(false)
     
     // Send message
-    await sendMessageMutation.mutateAsync({
+    sendMessageMutation.mutate({
       content: message.trim(),
       conversation_id: conversationId,
       role: 'user',

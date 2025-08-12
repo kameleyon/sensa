@@ -1,9 +1,9 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { createClient } from '@/lib/supabase/client'
-import { useChatStore } from '@/lib/store/chat-store'
-import type { Conversation, Message } from '@/lib/store/chat-store'
+import { createClient } from '../supabase/client'
+import { useChatStore } from '../store/chat-store'
+import type { Conversation, Message } from '../store/chat-store'
 
 const supabase = createClient()
 

@@ -1,5 +1,5 @@
 import { RealtimeChannel, RealtimePresenceState } from '@supabase/supabase-js'
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '../supabase/client'
 
 export interface Message {
   id: string

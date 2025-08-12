@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useCallback } from 'react'
-import { getRealtimeClient } from '@/lib/websocket/realtime-client'
-import { useChatStore } from '@/lib/store/chat-store'
-import type { Message } from '@/lib/store/chat-store'
+import { getRealtimeClient } from '../websocket/realtime-client'
+import { useChatStore } from '../store/chat-store'
+import type { Message as ChatMessage } from '../store/chat-store'
+import type { Message as RealtimeMessage } from '../websocket/realtime-client'
 import type { RealtimePresenceState } from '@supabase/supabase-js'
 
 interface UseRealtimeOptions {
@@ -31,13 +32,26 @@ export function useRealtime({
     setIsTyping,
   } = useChatStore()
 
+  // Convert realtime message to chat message
+  const convertMessage = useCallback((realtimeMessage: RealtimeMessage): ChatMessage => {
+    return {
+      id: realtimeMessage.id,
+      content: realtimeMessage.content,
+      role: 'assistant', // Default to assistant for incoming messages
+      conversation_id: realtimeMessage.conversation_id,
+      created_at: realtimeMessage.created_at,
+      updated_at: realtimeMessage.updated_at,
+    }
+  }, [])
+
   // Handle incoming messages
   const handleMessage = useCallback(
-    (message: Message) => {
-      // Add message to store
-      addMessage(message.conversation_id, message)
+    (message: RealtimeMessage) => {
+      // Convert and add message to store
+      const chatMessage = convertMessage(message)
+      addMessage(message.conversation_id, chatMessage)
     },
-    [addMessage]
+    [addMessage, convertMessage]
   )
 
   // Handle typing indicators
@@ -136,7 +150,7 @@ export function useRealtime({
       } else if (channel.state === 'errored') {
         setConnected(false)
         setConnectionStatus('error')
-      } else if (channel.state === 'leaving' || channel.state === 'left') {
+      } else if (channel.state === 'closed') {
         setConnected(false)
         setConnectionStatus('disconnected')
       }
